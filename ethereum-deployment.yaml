@@ -1,0 +1,178 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node1
+  namespace: ethereum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node1
+  template:
+    metadata:
+      labels:
+        app: node1
+    spec:
+      initContainers:
+      - image: cesresearch/busybox:1.22.1
+        name: check-bootnode-service
+        command: ['/bin/sh', '-c', 'nmap -sU -Pn bootnode-service.ethereum -p 30301 | grep open']
+      containers:
+      - name: node1
+        image: cesresearch/go-ethereum:1.8.3
+        imagePullPolicy: Always
+        command: ['docker-entrypoint.sh', 'miner']
+        #env:
+          # - name: COINBASE     # 设置挖矿账户，这个账户必须在keystore目录下
+          #   value: "0x....."
+          # - name: PASSWORD     # 设置密码, 该密码为解锁账户和创建新账户使用
+          #   value: "password"
+        ports:
+          - containerPort: 8545
+        volumeMounts:
+          - mountPath: /data
+            name: ethereum-volume
+            subPath: node1
+          - name: ethereum-config
+            mountPath: /etc/ethereum
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 256Mi
+      volumes:
+        - name: ethereum-volume
+          persistentVolumeClaim:
+            claimName: ethereum-pvc
+        - name: ethereum-config
+          configMap:
+            name: ethereum-config
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node2
+  namespace: ethereum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node2
+  template:
+    metadata:
+      labels:
+        app: node2
+    spec:
+      initContainers:
+      - image: cesresearch/busybox:1.22.1
+        name: check-bootnode-service
+        command: ['/bin/sh', '-c', 'nmap -sU -Pn bootnode-service.ethereum -p 30301 | grep open']
+      containers:
+      - name: node2
+        image: cesresearch/go-ethereum:1.8.3
+        imagePullPolicy: Always
+        command: ['docker-entrypoint.sh', 'miner']
+        ports:
+          - containerPort: 8545
+        volumeMounts:
+          - mountPath: /data
+            name: ethereum-volume
+            subPath: node2
+          - name: ethereum-config
+            mountPath: /etc/ethereum
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 256Mi
+      volumes:
+        - name: ethereum-volume
+          persistentVolumeClaim:
+            claimName: ethereum-pvc
+        - name: ethereum-config
+          configMap:
+            name: ethereum-config
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: node3
+  namespace: ethereum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node3
+  template:
+    metadata:
+      labels:
+        app: node3
+    spec:
+      initContainers:
+      - image: cesresearch/busybox:1.22.1
+        name: check-bootnode-service
+        command: ['/bin/sh', '-c', 'nmap -sU -Pn bootnode-service.ethereum -p 30301 | grep open']
+      containers:
+      - name: node3
+        image: cesresearch/go-ethereum:1.8.3
+        imagePullPolicy: Always
+        command: ['docker-entrypoint.sh', 'miner']
+        ports:
+          - containerPort: 8545
+        volumeMounts:
+          - mountPath: /data
+            name: ethereum-volume
+            subPath: node3
+          - name: ethereum-config
+            mountPath: /etc/ethereum
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 256Mi
+      volumes:
+        - name: ethereum-volume
+          persistentVolumeClaim:
+            claimName: ethereum-pvc
+        - name: ethereum-config
+          configMap:
+            name: ethereum-config
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bootnode
+  namespace: ethereum
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bootnode
+  template:
+    metadata:
+      labels:
+        app: bootnode
+    spec:
+      containers:
+      - name: bootnode
+        image: cesresearch/go-ethereum:1.8.3
+        imagePullPolicy: Always
+        command: ['docker-entrypoint.sh', 'bootnode']
+        ports:
+          - containerPort: 30301
+            protocol: UDP
+        volumeMounts:
+          - mountPath: /data
+            name: ethereum-volume
+            subPath: bootnode
+          - name: ethereum-config
+            mountPath: /etc/ethereum
+        resources:
+          requests:
+            cpu: 128m
+            memory: 256Mi
+      volumes:
+        - name: ethereum-volume
+          persistentVolumeClaim:
+            claimName: ethereum-pvc
+        - name: ethereum-config
+          configMap:
+            name: ethereum-config

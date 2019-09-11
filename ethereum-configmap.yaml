@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ethereum-config
+  namespace: ethereum
+data:
+  genesis.json: |
+    {"nonce":"0x0000000000000042",
+     "mixhash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+     "difficulty": "0x3900",
+     "alloc": {},
+     "coinbase":"0x0000000000000000000000000000000000000000",
+     "timestamp": "0x00",
+     "parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+     "extraData": "0x00000000",
+     "gasLimit":"0xffffffff",
+     "config": {}
+    }    
+  bootnode.key: |
+    96429886c465a32847fa75f2c3173b4e9f6f12854338c26b66ab31a3224ad4b5
+  bootnode.enode: |
+    4d9f551108fa86f49fcc1a1c20ce439630a8a9aecb063e9b2449931f98fc6860589015bef7e4ffa218662393f59c8c70088510a3b4f8899206060fecefcb4900

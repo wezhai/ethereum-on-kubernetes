@@ -1,0 +1,64 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node1-service
+  namespace: ethereum
+spec:
+  type: NodePort
+  ports:
+  - port: 8545
+    name: rpcport
+    nodePort: 30045
+  - port: 30303
+    name: discovery
+    nodePort: 30303
+  selector:
+    app: node1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node2-service
+  namespace: ethereum
+spec:
+  type: NodePort
+  ports:
+  - port: 8545
+    name: rpcport
+    nodePort: 30046
+  - port: 30303
+    name: discovery
+    nodePort: 30304
+  selector:
+    app: node2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node3-service
+  namespace: ethereum
+spec:
+  type: NodePort
+  ports:
+  - port: 8545
+    name: rpcport
+    nodePort: 30047
+  - port: 30303
+    name: discovery
+    nodePort: 30305
+  selector:
+    app: node3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bootnode-service
+  namespace: ethereum
+spec:
+  ports:
+  - port: 30301
+    targetPort: 30301
+    protocol: UDP
+  selector:
+    app: bootnode
