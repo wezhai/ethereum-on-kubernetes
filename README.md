@@ -9,6 +9,7 @@ nfs:
   server: 10.250.218.55
 ```
 2. 进行一些简单的设置
+
 你可以通过修改```ethereum-configmap.yaml```文件```genesis.json```的配置，以设置挖矿难度等参数.
 
 3. 创建所有资源对象
